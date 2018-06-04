@@ -30,3 +30,10 @@ These things will not be used here:
  - decorators
  - metaclasses
  - in-line imports
+
+#### Legal
+
+This is not sponsored by any company or anything like that.
+
+I just made the repository on my own, it is not in intended for _use_
+at all.
