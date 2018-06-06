@@ -21,8 +21,8 @@ class ResSubcommand(click.MultiCommand):
             print ' call kwargs: ' + str(kwargs)
 
         params = [
-            click.core.Argument(['pk'], type=int),
-            click.core.Option(['-b', '--baz'], type=unicode)
+            click.core.Argument(['pk'], 'pk', type=int),
+            click.core.Option(['-b', '--baz'], 'baz', type=unicode)
         ]
 
         cmd = click.core.Command('foo', callback=callback, params=params)

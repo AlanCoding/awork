@@ -1,10 +1,9 @@
-from distutils.core import setup
-from setuptools import find_packages
+from setuptools import setup
 
 
 setup(
     # Basic metadata
-    name='not-ansible-awork',
+    name='awork',
     version='1.0',
     author='Alan',
     author_email='arominge@redhat.com',
@@ -23,5 +22,5 @@ setup(
     },
     packages=['awork'],
     include_package_data=True,
-    zip_safe=False
+    zip_safe=True
 )

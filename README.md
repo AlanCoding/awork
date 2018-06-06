@@ -37,3 +37,22 @@ This is not sponsored by any company or anything like that.
 
 I just made the repository on my own, it is not in intended for _use_
 at all.
+
+### Timings
+
+As of 2nd commit, with zip_safe off:
+
+```
+real	0m0.232s
+user	0m0.142s
+sys	0m0.062s
+```
+
+With zip_safe on:
+
+```
+real	0m0.187s
+user	0m0.133s
+sys	0m0.050s
+```
+

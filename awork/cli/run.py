@@ -1,5 +1,3 @@
-import click
-
 from awork.cli.base import RootCommand
 
 
