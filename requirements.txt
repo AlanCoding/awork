@@ -2,3 +2,7 @@ click
 requests
 six
 PyYAML
+
+# Need for development
+# flake8
+# autopep8
