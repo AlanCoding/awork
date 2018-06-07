@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
@@ -14,13 +14,12 @@ setup(
 
     # How to do the install
     install_requires=['click', 'requests', 'six', 'PyYAML'],
-    provides=['awork'],
     entry_points={
         'console_scripts': [
             'awork=awork.cli.run:cli'
         ],
     },
-    packages=['awork'],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=True
 )

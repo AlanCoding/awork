@@ -178,6 +178,22 @@ class Settings(object):
         """
         return tuple([getattr(self, '_%s' % i) for i in self._parser_names])
 
+    def set_or_reset_runtime_param(self, key, value):
+        """Maintains the context of the runtime settings for invoking
+        a command.
+        This should be called by a click.option callback, and only
+        called once for each setting for each command invocation.
+        If the setting exists, it follows that the runtime settings are
+        stale, so the entire runtime settings are reset.
+        """
+        if self._runtime.has_option('general', key):
+            self._runtime = self._new_parser()
+
+        if value is None:
+            return
+        settings._runtime.set('general', key.replace('tower_', ''),
+                              six.text_type(value))
+
     @contextlib.contextmanager
     def runtime_values(self, **kwargs):
         """
@@ -232,6 +248,10 @@ class Settings(object):
             # have been reverted.
             for key in kwargs:
                 self._cache.pop(k, None)
+
+
+def _apply_runtime_setting(ctx, param, value):
+    settings.set_or_reset_runtime_param(param.name, value)
 
 
 def config_from_environment():
