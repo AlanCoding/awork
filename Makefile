@@ -10,12 +10,12 @@ install:
 refresh: clean install
 
 autopep:
-	autopep8 --in-place --recursive --max-line-length=79 awork/schema
+	time autopep8 --in-place --recursive --max-line-length=79 awork/schema
 
 clear_schema:
 	rm -rf awork/schema/current  # could have files that were removed
 
 schema_cmd:
-	awork produce_schema
+	time awork produce_schema
 
 schema:clear_schema schema_cmd autopep

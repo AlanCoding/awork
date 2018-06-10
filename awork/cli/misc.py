@@ -41,28 +41,31 @@ def crawl_api(root_dir, addr):
     resources = client.get(addr).json()
     with open(os.path.join(root_dir, '..', '__init__.py'), 'w'):
         pass
-    with open(os.path.join(root_dir, '__init__.py'), 'w'):
-        pass
+    with open(os.path.join(root_dir, '__init__.py'), 'w') as init_f:
+        import_root = root_dir.replace(os.sep, '.')
+        init_f.write('resource_list = [\n')
 
-    for res_endpoint, addr in resources.items():
-        click.echo('Obtaining OPTIONS for resource {}'.format(res_endpoint))
-        res_options = client.options(addr).json()
-        if 'types' not in res_options or len(res_options['types']) != 1:
-            click.echo(' skipping resource because of types: {}'.format(
-                res_options.get('types', None)
-            ))
-            continue
-        res_name = res_options['types'][0]
-        res_path = os.path.join(root_dir, '{}.py'.format(res_name))
-        click.echo(' writing OPTIONS to {}'.format(res_path))
-        with open(res_path, 'w') as f:
-            f.write('endpoint = "{}"\n'.format(res_endpoint))
-            pp = pprint.PrettyPrinter(indent=0, stream=f)
-            for var_name, val in res_options.items():
-                if var_name == 'description':
-                    continue
-                f.write('{} = '.format(var_name))
-                pp.pprint(val)
+        for res_endpoint, addr in resources.items():
+            click.echo('Obtaining OPTIONS for resource {}'.format(res_endpoint))
+            res_options = client.options(addr).json()
+            if 'types' not in res_options or len(res_options['types']) != 1:
+                click.echo(' skipping resource because of types: {}'.format(
+                    res_options.get('types', None)
+                ))
+                continue
+            res_name = res_options['types'][0]
+            res_path = os.path.join(root_dir, '{}.py'.format(res_name))
+            init_f.write('    "{}",\n'.format(res_name))
+            click.echo(' writing OPTIONS to {}'.format(res_path))
+            with open(res_path, 'w') as f:
+                f.write('endpoint = "{}"\n'.format(res_endpoint))
+                pp = pprint.PrettyPrinter(indent=0, stream=f)
+                for var_name, val in res_options.items():
+                    if var_name == 'description':
+                        continue
+                    f.write('{} = '.format(var_name))
+                    pp.pprint(val)
+        init_f.write(']\n')
 
 
 def _produce_schema():
