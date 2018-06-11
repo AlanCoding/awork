@@ -4,7 +4,7 @@ import click
 from awork.conf import _apply_runtime_setting
 
 
-__all__ = ['global_params']
+__all__ = ['CommandWithGlobals']
 
 
 class SettingOption(click.core.Option):
@@ -93,3 +93,16 @@ global_params = [
         is_flag=True,
     ),
 ]
+
+
+class CommandWithGlobals(click.core.Command):
+    '''
+    Class that comes with the global parameters automatically applied
+    '''
+    def get_params(self, ctx):
+        rv = super(CommandWithGlobals, self).get_params(ctx)
+        # TODO: idea is to create new internal "Field" class for all
+        # settings, which can be used accross all use cases, including
+        # this one
+        rv += global_params
+        return rv

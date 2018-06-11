@@ -1,17 +1,11 @@
-import os
-import pprint
 
 import click
 
-from awork.api import client
-from awork.cli.generics import global_params
+from awork.cli.generics import CommandWithGlobals
+from awork.models import server
 
 
 __all__ = ['version', 'produce_schema']
-
-
-class AworkCommand(click.core.Command):
-    pass
 
 
 def print_version():
@@ -20,66 +14,16 @@ def print_version():
 
     # Attempt to connect to the Ansible Tower server.
     # If we succeed, print a version; if not, generate a failure.
-    r = client.get('/config/')
-    config = r.json()
-    license = config.get('license_info', {}).get('license_type', 'open')
-    if license == 'open':
-        server_type = 'AWX'
-    else:
-        server_type = 'Ansible Tower'
-    click.echo('%s %s' % (server_type, config['version']))
+    config = server.get_server_config()
+    click.echo('%s %s' % (server.get_server_type(config), config['version']))
 
     # Print out Ansible version of server
     click.echo('Ansible %s' % config['ansible_version'])
 
 
-version = AworkCommand('version', callback=print_version, params=global_params)
+version = CommandWithGlobals('version', callback=print_version)
 
 
-def crawl_api(root_dir, addr):
-    resources = client.get(addr).json()
-    with open(os.path.join(root_dir, '..', '__init__.py'), 'w'):
-        pass
-    with open(os.path.join(root_dir, '__init__.py'), 'w') as init_f:
-        init_f.write('resource_list = [\n')
-
-        for res_endpoint, addr in resources.items():
-            click.echo(
-                'Obtaining OPTIONS for resource {}'.format(res_endpoint))
-            res_options = client.options(addr).json()
-            if 'types' not in res_options or len(res_options['types']) != 1:
-                click.echo(' skipping resource because of types: {}'.format(
-                    res_options.get('types', None)
-                ))
-                continue
-            res_name = res_options['types'][0]
-            res_path = os.path.join(root_dir, '{}.py'.format(res_name))
-            init_f.write('    "{}",\n'.format(res_name))
-            click.echo(' writing OPTIONS to {}'.format(res_path))
-            with open(res_path, 'w') as f:
-                f.write('endpoint = "{}"\n'.format(res_endpoint))
-                pp = pprint.PrettyPrinter(indent=0, stream=f)
-                for var_name, val in res_options.items():
-                    if var_name == 'description':
-                        continue
-                    f.write('{} = '.format(var_name))
-                    pp.pprint(val)
-        init_f.write(']\n')
-
-
-def _produce_schema():
-    if not os.path.isdir('awork'):
-        raise Exception('schema command must be ran from root directory.')
-
-    versions = client.get('/api/').json()['available_versions']
-
-    for prefix, addr in versions.items():
-        root_dir = os.path.join('awork', 'schema', 'current', prefix)
-        if not os.path.isdir(root_dir):
-            os.makedirs(root_dir)
-        click.echo('Crawling API for version {}'.format(prefix))
-        crawl_api(root_dir, addr)
-
-
-produce_schema = AworkCommand('produce_schema', callback=_produce_schema,
-                              params=global_params)
+produce_schema = CommandWithGlobals(
+    'produce_schema', callback=server.produce_schema
+)
