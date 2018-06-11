@@ -12,7 +12,9 @@ class RootCommand(click.MultiCommand):
 
     def list_commands(self, ctx):
         cmds = list(misc.__all__)
-        cmds += importlib.import_module('awork.schema.current.v2').resource_list
+        cmds += importlib.import_module(
+            'awork.schema.current.v2'
+        ).resource_list
         return cmds
 
     def get_command(self, ctx, name):

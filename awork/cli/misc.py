@@ -1,5 +1,4 @@
 import os
-import json
 import pprint
 
 import click
@@ -42,11 +41,11 @@ def crawl_api(root_dir, addr):
     with open(os.path.join(root_dir, '..', '__init__.py'), 'w'):
         pass
     with open(os.path.join(root_dir, '__init__.py'), 'w') as init_f:
-        import_root = root_dir.replace(os.sep, '.')
         init_f.write('resource_list = [\n')
 
         for res_endpoint, addr in resources.items():
-            click.echo('Obtaining OPTIONS for resource {}'.format(res_endpoint))
+            click.echo(
+                'Obtaining OPTIONS for resource {}'.format(res_endpoint))
             res_options = client.options(addr).json()
             if 'types' not in res_options or len(res_options['types']) != 1:
                 click.echo(' skipping resource because of types: {}'.format(
@@ -84,4 +83,3 @@ def _produce_schema():
 
 produce_schema = AworkCommand('produce_schema', callback=_produce_schema,
                               params=global_params)
-

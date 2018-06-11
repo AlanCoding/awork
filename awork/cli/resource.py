@@ -1,30 +1,30 @@
 
 import click
 
+from awork.cli.action import ActionSubcommand
+from awork.utils.functional import cached_property
+from awork.utils.grammar import action_names
+from awork.models.base import Resource
+
 
 class ResSubcommand(click.MultiCommand):
     """A subcommand that implements all command methods on the
     Resource.
     """
     def __init__(self, name):
-        self.awork_name = name
+        self.resource_name = name
         super(ResSubcommand, self).__init__()
 
+    @cached_property
+    def resource(self):
+        return Resource(self.resource_name)
+
+    def list_commands(self, ctx):
+        cmds = []
+        print ' listing commands '
+        for html_verb in self.resource.schema.actions.keys():
+            cmds.append(action_names[html_verb])
+        return cmds
+
     def get_command(self, ctx, name):
-
-        def callback(*args, **kwargs):
-            print ' root command:           awork (of course)'
-            print ' resource category name: ' + str(self.awork_name)
-            print ' action name:            ' + str(name)
-            print ''
-            print ' call args: ' + str(args)
-            print ' call kwargs: ' + str(kwargs)
-
-        params = [
-            click.core.Argument(['pk'], 'pk', type=int),
-            click.core.Option(['-b', '--baz'], 'baz', type=unicode)
-        ]
-
-        cmd = click.core.Command('foo', callback=callback, params=params)
-
-        return cmd
+        return ActionSubcommand(self.resource_name, name)

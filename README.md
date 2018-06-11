@@ -23,13 +23,39 @@ also of tower-cli.
  - `-b` is an option
  - `pk` is an argument
 
-#### Prohibited items
+#### Headline features of rewrite
 
-These things will not be used here:
+These are the user-facing more important features that this is trying to sell:
+
+ - No manual maintaining of fields list
+ - Tower version and API version switchable by server or user
+ - Accurate handling of uniqueness rules, no duplicate specification
+
+#### Code structure points
+
+Prohibited items:
 
  - decorators
  - metaclasses
- - in-line imports
+ - minimal in-line imports
+
+You could say that part of this refactor had already begun with the
+divorcing of the models/resources from the cli folder, where the command
+classes became logically organized in terms of root command, resource
+command, and then action command.
+
+This rewrite is intended to destroy the `tower_cli/resources` folder
+entirely, replacing it with `tower_cli/schema`.
+
+For now, the schema is generated (`make schema`), but the idea is that
+eventually, a more comprehensive schema could be officially published,
+and that would be used instead.
+
+Still to do goal: _Nothing_ in the cli folders are to do anything
+programatically non-trivial that is unconnected to the CLI interface.
+Instead, all _functional_ interactions with the server will go
+in the `tower_cli/models`, so that CLI users are not privileged over
+the python users.
 
 #### Legal
 

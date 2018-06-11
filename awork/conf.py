@@ -56,8 +56,10 @@ class Parser(configparser.ConfigParser):
 
 
 class Settings(object):
-    """A class that understands configurations provided to tower-cli through configuration files
-    or runtime parameters. A signleton object ``tower_cli.conf.settings`` will be instantiated and used.
+    """A class that understands configurations provided to tower-cli
+    through configuration files
+    or runtime parameters. A signleton object ``tower_cli.conf.settings``
+    will be instantiated and used.
     """
     _parser_names = ['runtime', 'environment', 'local', 'user', 'defaults']
 
@@ -93,7 +95,9 @@ class Settings(object):
         self._defaults = self._new_parser(defaults=defaults)
 
         # environment variables as defaults
-        self._environment = self._new_parser(defaults=config_from_environment())
+        self._environment = self._new_parser(
+            defaults=config_from_environment()
+        )
 
         # Initialize a parser for the user settings file.
         self._user = self._new_parser()
@@ -108,7 +112,9 @@ class Settings(object):
         # If there is a local settings file in the current working directory
         # or any parent, read it into the parser object.
         local_dir = os.getcwd()
-        local_dirs = [local_dir] if local_dir not in (os.path.expanduser('~'),) else []
+        local_dirs = (
+            [local_dir] if local_dir not in (os.path.expanduser('~'),) else []
+        )
 
         # Loop while there are 2 parts to local_dir
         while os.path.split(local_dir)[1]:
@@ -200,7 +206,8 @@ class Settings(object):
         =====API DOCS=====
         Context manager that temporarily override runtime level configurations.
 
-        :param kwargs: Keyword arguments specifying runtime configuration settings.
+        :param kwargs: Keyword arguments specifying runtime
+                       configuration settings.
         :type kwargs: arbitrary keyword arguments
         :returns: N/A
 

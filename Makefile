@@ -19,3 +19,6 @@ schema_cmd:
 	time awork produce_schema
 
 schema:clear_schema schema_cmd autopep
+
+flake8:
+	flake8 . --exclude=schema,build
