@@ -9,6 +9,11 @@ from awork.utils import secho
 
 
 class RootCommand(click.MultiCommand):
+    """
+    Base cli entry point, invoked simply by:
+        awork
+    This will list all commands and resources as the user's top-level menu
+    """
 
     def list_commands(self, ctx):
         cmds = list(misc.__all__)
